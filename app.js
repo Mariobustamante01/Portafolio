@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // === MODO CLARO/OSCURO ===
+
+  /* ===============================
+     MODO CLARO / OSCURO
+     =============================== */
   const toggleSwitch = document.querySelector(".toggle-switch");
   const circle = toggleSwitch.querySelector(".switch-circle");
   const icon = circle.querySelector("i");
@@ -19,10 +22,20 @@ document.addEventListener("DOMContentLoaded", function () {
     setTheme(isDark);
   });
 
-  // === ÍCONO PORTAFOLIO ROTATIVO ===
+  /* ===============================
+     ICONO PORTAFOLIO ROTATIVO
+     =============================== */
   const portfolioIcon = document.getElementById("portfolio-icon");
-  const icons = ["fa-briefcase", "fa-pen-nib", "fa-code", "fa-palette", "fa-laptop-code"];
+  const icons = [
+    "fa-briefcase",
+    "fa-pen-nib",
+    "fa-code",
+    "fa-palette",
+    "fa-laptop-code"
+  ];
+
   let index = 0;
+
   const interval = setInterval(() => {
     index++;
     if (index < icons.length) {
@@ -39,24 +52,28 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, 700);
 
-  // === SVG CONNECTOR ENTRE LAS TARJETAS ===
+  /* ===============================
+     SVG CONNECTOR ENTRE TARJETAS
+     =============================== */
   function drawConnectorLines() {
-    const pins = document.querySelectorAll('.card .pin');
-    const path = document.querySelector('.connector path');
+    const pins = document.querySelectorAll(".card .pin");
+    const path = document.querySelector(".connector path");
+    const container = document.querySelector(".card-container");
 
-    if (pins.length < 2 || !path) return;
+    if (!pins.length || !path || !container) return;
 
+    const containerRect = container.getBoundingClientRect();
     let d = "";
+
     for (let i = 0; i < pins.length - 1; i++) {
       const start = pins[i].getBoundingClientRect();
       const end = pins[i + 1].getBoundingClientRect();
-      const container = document.querySelector('.card-container').getBoundingClientRect();
 
-      const startX = start.left + start.width / 2 - container.left;
-      const startY = start.top + start.height / 2 - container.top;
+      const startX = start.left + start.width / 2 - containerRect.left;
+      const startY = start.top + start.height / 2 - containerRect.top;
 
-      const endX = end.left + end.width / 2 - container.left;
-      const endY = end.top + end.height / 2 - container.top;
+      const endX = end.left + end.width / 2 - containerRect.left;
+      const endY = end.top + end.height / 2 - containerRect.top;
 
       d += `M${startX},${startY} L${endX},${endY} `;
     }
@@ -64,6 +81,44 @@ document.addEventListener("DOMContentLoaded", function () {
     path.setAttribute("d", d);
   }
 
-  window.addEventListener('load', drawConnectorLines);
-  window.addEventListener('resize', drawConnectorLines);
+  window.addEventListener("load", drawConnectorLines);
+  window.addEventListener("resize", drawConnectorLines);
+
+  /* ===============================
+     HAMBURGER MENU (MOBILE)
+     =============================== */
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("navLinks");
+
+  if (hamburger && navLinks) {
+
+    hamburger.addEventListener("click", () => {
+      hamburger.classList.toggle("active");
+      navLinks.classList.toggle("active");
+
+      // Bloquear scroll cuando menú está abierto
+      document.body.style.overflow =
+        navLinks.classList.contains("active") ? "hidden" : "";
+    });
+
+    // Cerrar menú al hacer click en un link
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        hamburger.classList.remove("active");
+        navLinks.classList.remove("active");
+        document.body.style.overflow = "";
+      });
+    });
+
+    // Cerrar menú al cambiar a desktop
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 430) {
+        hamburger.classList.remove("active");
+        navLinks.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+    });
+  }
+
 });
+
